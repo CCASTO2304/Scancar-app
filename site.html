@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ScanCar - Descubra qualquer carro em um instante</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Reset e Estilos Gerais */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #0f1419;
+            color: #f0f0f0;
+            line-height: 1.6;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header e Navegação */
+        header {
+            padding: 20px 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            background-color: rgba(15, 20, 25, 0.95);
+            backdrop-filter: blur(10px);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #4a6cf7;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-links a {
+            color: #e0e0e0;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: #4a6cf7;
+        }
+
+        /* Seção Hero */
+        .hero {
+            padding: 180px 0 100px;
+            text-align: center;
+            background: linear-gradient(135deg, #0f1419 0%, #1a2433 100%);
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            background: linear-gradient(90deg, #4a6cf7, #8a63d2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 1.4rem;
+            max-width: 700px;
+            margin: 0 auto 40px;
+            color: #b0b0b0;
+        }
+
+        /* Demonstração da App */
+        .app-demo {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 40px 0;
+            position: relative;
+        }
+
+        .phone-mockup {
+            width: 300px;
+            height: 600px;
+            background: #1a2433;
+            border-radius: 40px;
+            padding: 20px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            position: relative;
+            z-index: 2;
+            border: 1px solid #2a3a50;
+        }
+
+        .phone-screen {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #0a0f16, #16202d);
+            border-radius: 30px;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+        }
+
+        .camera-view {
+            width: 90%;
+            height: 40%;
+            background: #2a3a50;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .car-image {
+            width: 100%;
+            height: 100%;
+            background: url('https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80') no-repeat center center;
+            background-size: cover;
+            transition: all 0.5s ease;
+        }
+
+        .scanning-animation {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, rgba(74, 108, 247, 0.2), transparent 30%);
+            animation: scan 2s infinite;
+        }
+
+        @keyframes scan {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100%); }
+        }
+
+        .result-overlay {
+            position: absolute;
+            bottom: 20%;
+            left: 5%;
+            right: 5%;
+            background: rgba(15, 20, 25, 0.9);
+            padding: 15px;
+            border-radius: 15px;
+            transform: translateY(20px);
+            opacity: 0;
+            transition: all 0.5s ease;
+        }
+
+        .phone-mockup:hover .result-overlay {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .result-overlay h3 {
+            color: #4a6cf7;
+            margin-bottom: 5px;
+        }
+
+        /* Botões de Download */
+        .download-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 15px 30px;
+            background: #4a6cf7;
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(74, 108, 247, 0.4);
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(74, 108, 247, 0.6);
+        }
+
+        .btn i {
+            font-size: 1.5rem;
+        }
+
+        /* Funcionalidades */
+        .features {
+            padding: 100px 0;
+            background-color: #131a23;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-title h2 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: #ffffff;
+        }
+
+        .section-title p {
+            color: #a0a0a0;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .feature-card {
+            background: #1a2433;
+            padding: 30px;
+            border-radius: 15px;
+            transition: transform 0.3s ease;
+            border: 1px solid #2a3a50;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            color: #4a6cf7;
+            margin-bottom: 20px;
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+
+        .feature-card p {
+            color: #b0b0b0;
+        }
+
+        /* Como Funciona */
+        .how-it-works {
+            padding: 100px 0;
+        }
+
+        .steps {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            margin-top: 50px;
+        }
+
+        .step {
+            flex: 1;
+            min-width: 250px;
+            text-align: center;
+            padding: 0 20px;
+            margin-bottom: 30px;
+        }
+
+        .step-number {
+            width: 60px;
+            height: 60px;
+            background: #4a6cf7;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin: 0 auto 20px;
+        }
+
+        /* Footer */
+        footer {
+            background: #0a0f16;
+            padding: 60px 0 30px;
+            text-align: center;
+        }
+
+        .footer-logo {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #4a6cf7;
+            margin-bottom: 20px;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 30px 0;
+        }
+
+        .footer-links a {
+            color: #b0b0b0;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: #4a6cf7;
+        }
+
+        .copyright {
+            color: #777;
+            margin-top: 30px;
+            font-size: 0.9rem;
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .hero p {
+                font-size: 1.1rem;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .download-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .steps {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <nav>
+                <div class="logo">ScanCar</div>
+                <div class="nav-links">
+                    <a href="#features">Funcionalidades</a>
+                    <a href="#how-it-works">Como Funciona</a>
+                    <a href="#download">Download</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Seção Hero -->
+    <section class="hero">
+        <div class="container">
+            <h1>O Shazam para Carros e Motos</h1>
+            <p>Aponte, fotografe e descubra. Identifique qualquer veículo em segundos com tecnologia de inteligência artificial.</p>
+            
+            <div class="app-demo">
+                <div class="phone-mockup">
+                    <div class="phone-screen">
+                        <div class="camera-view">
+                            <div class="car-image"></div>
+                            <div class="scanning-animation"></div>
+                        </div>
+                        <div class="result-overlay">
+                            <h3>Porsche 911 Carrera (992)</h3>
+                            <p>Ano: 2020 - Presente</p>
+                            <p>Motor: 3.0L Twin-Turbo Flat-6</p>
+                            <p>Potência: 443 cv</p>
+                        </div>
+                        <p style="margin-top: 20px; color: #4a6cf7;">Toque para escanear</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="download-buttons">
+                <a href="#" class="btn">
+                    <i class="fab fa-apple"></i>
+                    <div>
+                        <small>Disponível na</small>
+                        <div>App Store</div>
+                    </div>
+                </a>
+                <a href="#" class="btn">
+                    <i class="fab fa-google-play"></i>
+                    <div>
+                        <small>Disponível no</small>
+                        <div>Google Play</div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Funcionalidades -->
+    <section class="features" id="features">
+        <div class="container">
+            <div class="section-title">
+                <h2>Funcionalidades Incríveis</h2>
+                <p>Descubra tudo o que a ScanCar pode fazer por si</p>
+            </div>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-camera"></i>
+                    </div>
+                    <h3>Identificação Instantânea</h3>
+                    <p>Basta apontar a câmara para qualquer carro, mota ou camião e obter informações detalhadas em segundos.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-database"></i>
+                    </div>
+                    <h3>Base de Dados Completa</h3>
+                    <p>Acesso a informações de mais de 50.000 modelos de veículos de todas as marcas e épocas.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-bar"></i>
+                    </div>
+                    <h3>Especificações Técnicas</h3>
+                    <p>Detalhes completos sobre motores, potência, consumos, dimensões e muito mais.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-history"></i>
+                    </div>
+                    <h3>Histórico de Pesquisas</h3>
+                    <p>Guarde os veículos que identificou e crie a sua própria coleção de descobertas.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-car-side"></i>
+                    </div>
+                    <h3>Funciona Offline</h3>
+                    <p>Identifique veículos mesmo sem ligação à internet após o download inicial da base de dados.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-share-alt"></i>
+                    </div>
+                    <h3>Partilhe com Amigos</h3>
+                    <p>Partilhe as suas descobertas nas redes sociais ou com amigos via mensagem.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Como Funciona -->
+    <section class="how-it-works" id="how-it-works">
+        <div class="container">
+            <div class="section-title">
+                <h2>Como Funciona</h2>
+                <p>Três passos simples para identificar qualquer veículo</p>
+            </div>
+            
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3>Aponte a Câmara</h3>
+                    <p>Abra a app e aponte a câmara do seu telemóvel para o veículo que quer identificar.</p>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3>Capture a Foto</h3>
+                    <p>Toque no ecrã para capturar a imagem. A nossa IA analisa automaticamente o veículo.</p>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3>Obtenha Resultados</h3>
+                    <p>Receba informações detalhadas sobre o modelo, ano, especificações e muito mais.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action Final -->
+    <section class="features">
+        <div class="container">
+            <div class="section-title">
+                <h2>Pronto para Descobrir?</h2>
+                <p>Junte-se a milhares de entusiastas de automóveis que já usam a ScanCar</p>
+            </div>
+            
+            <div class="download-buttons" id="download">
+                <a href="#" class="btn">
+                    <i class="fab fa-apple"></i>
+                    <div>
+                        <small>Disponível na</small>
+                        <div>App Store</div>
+                    </div>
+                </a>
+                <a href="#" class="btn">
+                    <i class="fab fa-google-play"></i>
+                    <div>
+                        <small>Disponível no</small>
+                        <div>Google Play</div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-logo">ScanCar</div>
+            <p>O identificador de veículos mais avançado no seu bolso</p>
+            
+            <div class="footer-links">
+                <a href="#">Privacidade</a>
+                <a href="#">Termos</a>
+                <a href="#">Suporte</a>
+                <a href="#">Sobre Nós</a>
+            </div>
+            
+            <div class="copyright">
+                &copy; 2023 ScanCar. Todos os direitos reservados.
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
